@@ -1,0 +1,68 @@
+package org.mariuszgromada.math.mxparser;
+
+import java.util.*;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
+/*
+ * A program that prompts a user to calculate 
+ * a function to find the approximate root
+ * using Newton-Raphson Method
+ * 
+ * */
+public class newton {
+	
+	static void proc(String fx,String xguess, float ea,int rounding) {
+		//parsing process
+		Function f = new Function ("f(x) = "+fx);
+			Argument x = new Argument ("x = "+xguess);
+				Expression fof = new Expression ("f(x)", f, x);
+					Expression gof = new Expression ("der("+fx+", x, "+xguess+")");//first derivative done
+					
+					System.out.printf("%5s%11s%15s%15s%15s%15s\n", "Iteration", "x0","x1", "f(x)", "f'(x)","Ea\n");
+						DecimalFormat df = new DecimalFormat("#.####");//round off decimal places
+							float x0 = Float.parseFloat(xguess);
+								float x1 =(float) ((x0) - ((fof.calculate())/(gof.calculate())));//newtons method formula
+									double Ea = Math.abs((x1) - (x0));
+										
+										System.out.printf("%5d%15s%15s%15s%15s\n", 1,(x0),df.format(x1),df.format(fof.calculate()),df.format(gof.calculate()));
+										//first iteration output
+						
+		int itr =2;				
+		while (Ea>ea) {
+			Argument test1 = new Argument ("x = "+ (x1));
+				fof = new Expression ("f(x)", f, test1);
+					gof = new Expression ("der("+fx+", x, "+ (x1) +")");
+						x0=x1;
+							x1 = (float) ((float) (x0) - (fof.calculate())/(gof.calculate()));
+								Ea = Math.abs((x1) - (x0));
+									System.out.printf("%5d%15s%15s%15s%15s%15s\n", itr,(x0), df.format(x1), df.format(fof.calculate()),df.format(gof.calculate()),df.format(Ea));
+														itr++;
+														//displaying output to be called out in the main function
+		if (itr>100){
+			System.out.printf("infinite looping");
+				break;
+					}
+				}
+				df.setRoundingMode(RoundingMode.CEILING);
+					System.out.printf("Root: "+df.format(x1));//root output
+					System.out.println("");
+	}
+
+	
+	//calling all the methods to main
+	public static void main (String [] args) {
+
+	Scanner sc = new Scanner(System.in);
+		System.out.printf("Newton-Raphson Method Calculator\n\n");
+			System.out.printf("Enter f(x): ");
+				String fx = sc.nextLine();
+					System.out.printf("Enter x0: ");
+						String xguess = sc.nextLine();
+							System.out.printf("Enter value of Ea: ");
+								float ea = sc.nextFloat();
+									proc(fx,xguess,ea, 0);
+	}
+}
+
+
